@@ -4,6 +4,7 @@ package consignment;
 
 service ShippingService{
     rpc CreateConsignment(Consignment)returns (Response){}
+    rpc GetConsignments(GetRequest) returns (Response){}
 }
 
 message Consignment{
@@ -15,6 +16,8 @@ message Consignment{
 
 }
 
+message GetRequest{}
+
 message Container{
     string id = 1;
     string customer_id = 2;
@@ -25,4 +28,5 @@ message Container{
 message Response{
     bool created = 1;
     Consignment consignment = 2;
+    repeated Consignment list_consignments = 3;
 }
