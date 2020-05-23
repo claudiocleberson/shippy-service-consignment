@@ -1,0 +1,5 @@
+#Compile proto file - MICRO PLUGIN
+protoc -I. --go_out=plugins=micro:. proto/consignment/consignment.proto
+
+#Compile proto file - GRPC plugin
+ protoc -I consignment/  --go_out=plugins=grpc:consignment  consignment/consignment.proto

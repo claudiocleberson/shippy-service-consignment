@@ -1,14 +1,10 @@
 package main
 
 import (
-	"log"
-	"net"
-
 	pb "github.com/claudiocleberson/shippy-service-consignment/proto/consignment"
 	"github.com/claudiocleberson/shippy-service-consignment/repository"
 	"github.com/claudiocleberson/shippy-service-consignment/services"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"github.com/micro/go-micro"
 )
 
 const (
@@ -18,19 +14,31 @@ const (
 func main() {
 	repo := repository.NewRepository()
 	srvConsignment := services.NewService(repo)
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
+
+	srv := micro.NewService(
+		micro.Name("shippy.service.consignment"),
+	)
+	srv.Init()
+
+	pb.RegisterShippingServiceHandler(srv.Server(), srvConsignment)
+
+	if err := srv.Run(); err != nil {
 		panic(err)
 	}
 
-	s := grpc.NewServer()
+	// lis, err := net.Listen("tcp", port)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	pb.RegisterShippingServiceServer(s, srvConsignment)
+	// s := grpc.NewServer()
 
-	reflection.Register(s)
+	// pb.RegisterShippingServiceServer(s, srvConsignment)
 
-	log.Println("Running server on port:", port)
-	if err := s.Serve(lis); err != nil {
-		panic(err)
-	}
+	// reflection.Register(s)
+
+	// log.Println("Running server on port:", port)
+	// if err := s.Serve(lis); err != nil {
+	// 	panic(err)
+	// }
 }

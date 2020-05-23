@@ -8,8 +8,8 @@ import (
 )
 
 type ServiceConsignmentInterface interface {
-	CreateConsignment(ctx context.Context, req *pb.Consignment) (*pb.Response, error)
-	GetConsignments(ctx context.Context, req *pb.GetRequest) (*pb.Response, error)
+	CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error
+	GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error
 }
 
 type serviceConsignment struct {
@@ -22,27 +22,25 @@ func NewService(repo repo.ConsignmentRepository) ServiceConsignmentInterface {
 	}
 }
 
-func (s *serviceConsignment) CreateConsignment(ctx context.Context, req *pb.Consignment) (*pb.Response, error) {
+func (s *serviceConsignment) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
 
 	consignment, err := s.repo.Create(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	resp := pb.Response{
-		Created:     true,
-		Consignment: consignment,
-	}
+	res.Created = true
+	res.Consignment = consignment
 
-	return &resp, nil
+	return nil
 
 }
 
-func (s *serviceConsignment) GetConsignments(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
+func (s *serviceConsignment) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
+
 	consignments := s.repo.GetAll()
 
-	response := &pb.Response{
-		ListConsignments: consignments,
-	}
-	return response, nil
+	res.ListConsignments = consignments
+
+	return nil
 }
