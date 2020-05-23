@@ -1,3 +1,6 @@
+--Build the application before set the container
+ env CGO_ENABLED=0  GOOS=linux go build -a -installsuffix cgo -o ./builds/shippy-service-consignment
+
 
 --Build container
 $ docker build -t shippy-service-consignment .
