@@ -1,4 +1,4 @@
-package services
+package handlers
 
 import (
 	"context"
@@ -9,24 +9,24 @@ import (
 	vesselProto "github.com/claudiocleberson/shippy-service-vessel/proto/vessel"
 )
 
-type ServiceConsignmentInterface interface {
+type HandlerConsignmentInterface interface {
 	CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error
 	GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error
 }
 
-type serviceConsignment struct {
+type handlerConsignment struct {
 	repo         repo.ConsignmentRepository
 	vesselClient vesselProto.VesselServiceClient
 }
 
-func NewService(repo repo.ConsignmentRepository, vesselCli vesselProto.VesselServiceClient) ServiceConsignmentInterface {
-	return &serviceConsignment{
+func NewConsignmentHandler(repo repo.ConsignmentRepository, vesselCli vesselProto.VesselServiceClient) HandlerConsignmentInterface {
+	return &handlerConsignment{
 		repo:         repo,
 		vesselClient: vesselCli,
 	}
 }
 
-func (s *serviceConsignment) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
+func (s *handlerConsignment) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
 
 	//Here we call a client instance of our vessel service with our consignment weight,
 	//and the amount of containers as the capacity value
@@ -56,7 +56,7 @@ func (s *serviceConsignment) CreateConsignment(ctx context.Context, req *pb.Cons
 
 }
 
-func (s *serviceConsignment) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
+func (s *handlerConsignment) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
 
 	consignments := s.repo.GetAll()
 

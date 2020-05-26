@@ -1,19 +1,32 @@
 package main
 
 import (
+	"os"
+
+	"github.com/claudiocleberson/shippy-service-consignment/datastore"
+	"github.com/claudiocleberson/shippy-service-consignment/handlers"
 	pb "github.com/claudiocleberson/shippy-service-consignment/proto/consignment"
 	"github.com/claudiocleberson/shippy-service-consignment/repository"
-	"github.com/claudiocleberson/shippy-service-consignment/services"
 	vesselProto "github.com/claudiocleberson/shippy-service-vessel/proto/vessel"
 	"github.com/micro/go-micro"
 )
 
 const (
-	port = ":50051"
+	port        = ":50051"
+	dbHost      = "DB_HOST"
+	defaultHost = "mongodb://datastore:27017"
 )
 
 func main() {
-	repo := repository.NewRepository()
+
+	mongoUri := os.Getenv(dbHost)
+	if mongoUri == "" {
+		mongoUri = defaultHost
+	}
+
+	dbClient := datastore.NewMongoClient(mongoUri)
+
+	repo := repository.NewRepository(dbClient)
 
 	srv := micro.NewService(
 		micro.Name("shippy.service.consignment"),
@@ -23,7 +36,7 @@ func main() {
 	//Declare service clientes dependecies
 	vesselClient := vesselProto.NewVesselServiceClient("shippy.service.vessel", srv.Client())
 
-	srvConsignment := services.NewService(repo, vesselClient)
+	srvConsignment := handlers.NewConsignmentHandler(repo, vesselClient)
 
 	pb.RegisterShippingServiceHandler(srv.Server(), srvConsignment)
 

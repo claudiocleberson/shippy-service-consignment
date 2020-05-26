@@ -1,8 +1,10 @@
 package repository
 
 import (
-	"sync"
+	"context"
 
+	"github.com/claudiocleberson/shippy-service-consignment/datastore"
+	"github.com/claudiocleberson/shippy-service-consignment/models"
 	pb "github.com/claudiocleberson/shippy-service-consignment/proto/consignment"
 )
 
@@ -12,23 +14,34 @@ type ConsignmentRepository interface {
 }
 
 type consignmentRepository struct {
-	mu           sync.RWMutex
-	consignments []*pb.Consignment
+	mongoClient datastore.MongoClient
 }
 
-func NewRepository() ConsignmentRepository {
-	return &consignmentRepository{}
+func NewRepository(datastore datastore.MongoClient) ConsignmentRepository {
+	return &consignmentRepository{
+		mongoClient: datastore,
+	}
 }
 
 func (repo *consignmentRepository) Create(cons *pb.Consignment) (*pb.Consignment, error) {
-	repo.mu.Lock()
-	update := append(repo.consignments, cons)
-	repo.consignments = update
-	repo.mu.Unlock()
+
+	ctx := context.Background()
+
+	err := repo.mongoClient.Create(ctx, models.MarshalConsignment(cons))
+	if err != nil {
+		return nil, err
+	}
+
 	return cons, nil
 }
 
 func (repo *consignmentRepository) GetAll() []*pb.Consignment {
 
-	return repo.consignments
+	ctx := context.Background()
+	result, err := repo.mongoClient.GetAll(ctx)
+	if err != nil {
+		return nil
+	}
+
+	return models.UnmarshalConsignmentCollection(result)
 }
