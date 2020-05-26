@@ -14,7 +14,7 @@ import (
 const (
 	port        = ":50051"
 	dbHost      = "DB_HOST"
-	defaultHost = "mongodb://datastore:27017"
+	defaultHost = "mongodb://localhost:27017"
 )
 
 func main() {

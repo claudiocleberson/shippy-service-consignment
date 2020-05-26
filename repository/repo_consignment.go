@@ -10,7 +10,7 @@ import (
 
 type ConsignmentRepository interface {
 	Create(*pb.Consignment) (*pb.Consignment, error)
-	GetAll() []*pb.Consignment
+	GetAll(context.Context) []*pb.Consignment
 }
 
 type consignmentRepository struct {
@@ -35,9 +35,8 @@ func (repo *consignmentRepository) Create(cons *pb.Consignment) (*pb.Consignment
 	return cons, nil
 }
 
-func (repo *consignmentRepository) GetAll() []*pb.Consignment {
+func (repo *consignmentRepository) GetAll(ctx context.Context) []*pb.Consignment {
 
-	ctx := context.Background()
 	result, err := repo.mongoClient.GetAll(ctx)
 	if err != nil {
 		return nil

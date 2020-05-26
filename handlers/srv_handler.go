@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	pb "github.com/claudiocleberson/shippy-service-consignment/proto/consignment"
@@ -36,7 +37,7 @@ func (s *handlerConsignment) CreateConsignment(ctx context.Context, req *pb.Cons
 	})
 
 	if err != nil {
-		return nil
+		return errors.New("no vessel available")
 	}
 
 	fmt.Printf("Found vessel: %s \n", vesselResponse.Vessel.Name)
@@ -58,7 +59,7 @@ func (s *handlerConsignment) CreateConsignment(ctx context.Context, req *pb.Cons
 
 func (s *handlerConsignment) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
 
-	consignments := s.repo.GetAll()
+	consignments := s.repo.GetAll(ctx)
 
 	res.ListConsignments = consignments
 

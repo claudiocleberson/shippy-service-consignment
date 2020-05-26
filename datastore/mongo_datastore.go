@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/claudiocleberson/shippy-service-consignment/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -53,7 +54,7 @@ func connectMongoCluster(uri string) {
 		connectMongoCluster(uri)
 	}
 
-	client.Database(dabaseName).Collection(collectionName)
+	mongoCollection = client.Database(dabaseName).Collection(collectionName)
 
 	log.Println("Mongo cluster connected...")
 }
@@ -67,7 +68,7 @@ func (m *mongoClient) Create(ctx context.Context, cons *models.Consignment) erro
 
 func (m *mongoClient) GetAll(ctx context.Context) ([]*models.Consignment, error) {
 
-	cur, err := mongoCollection.Find(ctx, nil, nil)
+	cur, err := mongoCollection.Find(ctx, bson.D{})
 
 	if err != nil {
 		return nil, err
@@ -75,11 +76,11 @@ func (m *mongoClient) GetAll(ctx context.Context) ([]*models.Consignment, error)
 
 	var consignments []*models.Consignment
 	for cur.Next(ctx) {
-		var consignment *models.Consignment
+		var consignment models.Consignment
 		if err := cur.Decode(&consignment); err != nil {
 			return nil, err
 		}
-		consignments = append(consignments, consignment)
+		consignments = append(consignments, &consignment)
 	}
 
 	return consignments, nil

@@ -13,4 +13,4 @@ build:
 	docker build -t $(PROJECTNAME) .
 run:
 	#Running docker container
-	docker run -p 50051:50051 -e MICRO_SERVER_ADDRESS=:50051 -e MICRO_REGISTRY=mdns $(PROJECTNAME)
+	docker run  --network=host -p 50051:50051 -e MICRO_ADDRESS=:50051 -e MICRO_REGISTRY=mdns $(PROJECTNAME)
