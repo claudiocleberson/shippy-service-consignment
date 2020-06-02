@@ -3,6 +3,7 @@ module github.com/claudiocleberson/shippy-service-consignment
 go 1.13
 
 require (
+	github.com/claudiocleberson/shippy-service-users v0.0.0-20200527090611-44b10fff8c03
 	github.com/claudiocleberson/shippy-service-vessel v0.0.0-20200523164108-deafbc9aeef1
 	github.com/golang/protobuf v1.4.2
 	github.com/micro/go-micro v1.18.0
