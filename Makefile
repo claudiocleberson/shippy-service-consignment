@@ -15,18 +15,7 @@ run:
 	#Running docker container
 	docker run -p  50051:50051 \
 				--network=host \
-	 		   --name shippy-service \
-	 		   -e DB_HOST=mongodb://127.0.0.1:27017\
-			   -e MICRO_ADDRESS=:50051\
-			   -e MICRO_REGISTRY=mdns\
+	 		    -e DB_HOST=mongodb://127.0.0.1:27017\
+			    -e MICRO_ADDRESS=:50051\
+			    -e MICRO_REGISTRY=mdns\
 			    $(PROJECTNAME)
-
-
-		# docker run -p  50051:50051 \
-		# 		--network=host \
-	 	# 	   --name shippy-service \
-	 	# 	   --link datastore:mongo\
-		# 	   -e DB_HOST=mongodb://datastore:27017\
-		# 	   -e MICRO_ADDRESS=:50051\
-		# 	   -e MICRO_REGISTRY=mdns\
-		# 	    $(PROJECTNAME)

@@ -36,16 +36,16 @@ func main() {
 	repo := repository.NewRepository(dbClient)
 
 	srv := micro.NewService(
-		micro.Name("shippy.service.consignment"),
+		micro.Name("shippy.consignment"),
 		micro.Version("latest"),
 
 		//Out auth middleware
-		micro.WrapHandler(AuthWrapper),
+		//micro.WrapHandler(AuthWrapper),
 	)
 	srv.Init()
 
 	//Declare service clientes dependecies
-	vesselClient := vesselProto.NewVesselServiceClient("shippy.service.vessel", srv.Client())
+	vesselClient := vesselProto.NewVesselServiceClient("shippy.vessel", srv.Client())
 
 	srvConsignment := handlers.NewConsignmentHandler(repo, vesselClient)
 
@@ -84,7 +84,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		log.Println("Authenticatin with token: ", token)
 
 		//Validate token
-		authClient := userService.NewUserServiceClient("shippy.service.users", client.DefaultClient)
+		authClient := userService.NewUserServiceClient("shippy.users", client.DefaultClient)
 		_, err := authClient.ValidateToken(context.Background(), &userService.Token{
 			Token: token,
 		})
